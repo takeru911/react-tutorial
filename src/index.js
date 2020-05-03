@@ -158,17 +158,25 @@ class Game extends React.Component {
 }
 
 // ========================================
-const boardSize = 3;
-const winLines = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6],
-];
+const range = (from, to, step = 1) =>
+    from < to || ( !to && from > 0)
+        ? [... Array(to ? (to - from) / step : from)].map((v, i) =>
+            to
+                ? from + i * step
+                : i
+        )
+        : []
+const boardSize = 10;
+let winLines = [];
+for(let i = 0; i < boardSize; i++){
+    winLines.push(range(i * boardSize, (i + 1 ) * boardSize));
+}
+for(let i = 0; i < boardSize; i++){
+    winLines.push(range(i, boardSize * boardSize + i));
+}
+winLines.push(range(0, boardSize * (boardSize + 1), boardSize + 1));
+winLines.push(range(boardSize -1, (boardSize - 1) * (boardSize + 1), boardSize - 1));
+
 ReactDOM.render(
     <Game
         boardSize={boardSize}
@@ -178,15 +186,23 @@ ReactDOM.render(
 
 function calculateWinner(squares) {
     for (let i = 0; i < winLines.length; i++) {
-        const [a, b, c] = winLines[i];
-        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-            return {
-                winner: squares[a],
-                winSquares: [a, b, c],
-            }
-
+        const winLine = winLines[i];
+        const marker = squares[winLine[0]];
+        if (!marker){
+            continue;
         }
-    }
+        let isExit = true;
+        for(let j = 0; j < winLine.length; j++){
+            if(marker !== squares[winLine[j]]){
+                isExit = false;
+            }
+        }
+        if(isExit)
+            return {
+                winner: marker,
+                winSquares: winLine,
+            }
+        }
     return {
         winner: null,
         winSquares: null,
