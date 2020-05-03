@@ -39,7 +39,7 @@ class Board extends React.Component {
     }
 
     render() {
-        const boardSize = 3;
+        const boardSize = this.props.boardSize;
         const boardElements = this.buildBoardElement(boardSize);
         return (
             <div>
@@ -96,17 +96,16 @@ class Game extends React.Component {
         )
     }
 
-
-
     render() {
+        const boardSize = this.props.boardSize;
         const history = this.state.history;
         const current = history[this.state.stepNumber];
         const winInfo = calculateWinner(current.squares);
         const winner = winInfo.winner;
         const winSquares = winInfo.winSquares;
         const moves = history.map((step, move) => {
-            const clickCol = Math.floor(step.clickSquare / 3);
-            const clickRow = step.clickSquare % 3;
+            const clickCol = Math.floor(step.clickSquare / boardSize);
+            const clickRow = step.clickSquare % boardSize;
             const desc = move ?
                 `Go to Move # ${move}, (${clickCol}, ${clickRow})` :
                 'Go to game start';
@@ -130,6 +129,9 @@ class Game extends React.Component {
             status = 'Winner: ' + winner;
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+            if(this.state.stepNumber === boardSize * boardSize){
+                status = '引き分けでしたよっと'
+            }
         }
         return (
             <div className="game">
@@ -138,6 +140,7 @@ class Game extends React.Component {
                         squares={current.squares}
                         onClick={(i) => this.handleClick(i)}
                         winSquares={winSquares}
+                        boardSize={boardSize}
                     />
                 </div>
                 <div className="game-info">
@@ -155,25 +158,27 @@ class Game extends React.Component {
 }
 
 // ========================================
-
+const boardSize = 3;
+const winLines = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+];
 ReactDOM.render(
-    <Game/>,
+    <Game
+        boardSize={boardSize}
+    />,
     document.getElementById('root')
 );
 
 function calculateWinner(squares) {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-    ];
-    for (let i = 0; i < lines.length; i++) {
-        const [a, b, c] = lines[i];
+    for (let i = 0; i < winLines.length; i++) {
+        const [a, b, c] = winLines[i];
         if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
             return {
                 winner: squares[a],
