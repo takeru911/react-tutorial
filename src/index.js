@@ -166,17 +166,17 @@ const range = (from, to, step = 1) =>
                 : i
         )
         : []
-const boardSize = 10;
+const boardSize = 5;
 let winLines = [];
 for(let i = 0; i < boardSize; i++){
     winLines.push(range(i * boardSize, (i + 1 ) * boardSize));
 }
 for(let i = 0; i < boardSize; i++){
-    winLines.push(range(i, boardSize * boardSize + i));
+    winLines.push(range(i, boardSize * boardSize + i, boardSize));
 }
 winLines.push(range(0, boardSize * (boardSize + 1), boardSize + 1));
 winLines.push(range(boardSize -1, (boardSize - 1) * (boardSize + 1), boardSize - 1));
-
+console.log(winLines);
 ReactDOM.render(
     <Game
         boardSize={boardSize}
