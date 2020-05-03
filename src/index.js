@@ -82,10 +82,6 @@ class Game extends React.Component {
         )
     }
 
-    calculateRowCol(square){
-
-    }
-
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
@@ -95,12 +91,15 @@ class Game extends React.Component {
             const clickCol = Math.floor(step.clickSquare / 3);
             const clickRow = step.clickSquare % 3;
             const desc = move ?
-                'Go to Move #' + move + '(' + clickCol + ',' + clickRow + ')':
+                `Go to Move # ${move}, (${clickCol}, ${clickRow})`:
                 'Go to game start';
             return (
                 <li key={move}>
                     <button onClick={() => this.jumpTo(move)}>
-                        {desc}
+                        {this.state.stepNumber === move ?
+                            <b>{desc}</b> :
+                            desc
+                        }
                     </button>
                 </li>
             )
