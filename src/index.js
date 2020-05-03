@@ -13,31 +13,34 @@ function Square(props) {
 class Board extends React.Component {
     renderSquare(i) {
         return (
-            <Square
+            <Square key={i}
                 value={this.props.squares[i]}
                 onClick={() => this.props.onClick(i)}
             />
         );
     }
 
+    buildBoardElement(boardSize) {
+        let boardElements = []
+        for(let row = 0; row < boardSize; row++){
+            let rows = [];
+            for(let col = 0; col < boardSize; col++){
+                rows.push(this.renderSquare(row * boardSize + col));
+            }
+            boardElements.push(
+                <div key={row} className="board-row" >{rows}</div>
+            )
+        }
+
+        return boardElements;
+    }
+
     render() {
+        const boardSize = 3;
+        const boardElements = this.buildBoardElement(boardSize);
         return (
             <div>
-                <div className="board-row">
-                    {this.renderSquare(0)}
-                    {this.renderSquare(1)}
-                    {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
+                {boardElements}
             </div>
         );
     }
@@ -60,7 +63,7 @@ class Game extends React.Component {
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[this.state.stepNumber];
         const squares = current.squares.slice();
-        if (calculateWinner(squares) || squares[i]){
+        if (calculateWinner(squares) || squares[i]) {
             return;
         }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
@@ -91,7 +94,7 @@ class Game extends React.Component {
             const clickCol = Math.floor(step.clickSquare / 3);
             const clickRow = step.clickSquare % 3;
             const desc = move ?
-                `Go to Move # ${move}, (${clickCol}, ${clickRow})`:
+                `Go to Move # ${move}, (${clickCol}, ${clickRow})` :
                 'Go to game start';
             return (
                 <li key={move}>
@@ -116,7 +119,7 @@ class Game extends React.Component {
                 <div className="game-board">
                     <Board
                         squares={current.squares}
-                        onClick={(i)=>this.handleClick(i)}
+                        onClick={(i) => this.handleClick(i)}
                     />
                 </div>
                 <div className="game-info">
