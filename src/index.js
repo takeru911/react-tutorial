@@ -15,7 +15,7 @@ class Board extends React.Component {
         const winSquares = this.props.winSquares;
         return (
             <Square
-                className={winSquares && winSquares.includes(i) ? 'win square': 'square'}
+                className={winSquares && winSquares.includes(i) ? 'win square' : 'square'}
                 key={i}
                 value={this.props.squares[i]}
                 onClick={() => this.props.onClick(i)}
@@ -25,13 +25,13 @@ class Board extends React.Component {
 
     buildBoardElement(boardSize) {
         let boardElements = []
-        for(let row = 0; row < boardSize; row++){
+        for (let row = 0; row < boardSize; row++) {
             let rows = [];
-            for(let col = 0; col < boardSize; col++){
+            for (let col = 0; col < boardSize; col++) {
                 rows.push(this.renderSquare(row * boardSize + col));
             }
             boardElements.push(
-                <div key={row} className="board-row" >{rows}</div>
+                <div key={row} className="board-row">{rows}</div>
             )
         }
 
@@ -89,7 +89,7 @@ class Game extends React.Component {
         )
     }
 
-    sortClick(){
+    sortClick() {
         this.setState({
                 isAscSorted: !this.state.isAscSorted
             }
@@ -120,7 +120,7 @@ class Game extends React.Component {
                 </li>
             )
         });
-        if(!this.state.isAscSorted) {
+        if (!this.state.isAscSorted) {
             moves.reverse();
         }
 
@@ -129,7 +129,7 @@ class Game extends React.Component {
             status = 'Winner: ' + winner;
         } else {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-            if(this.state.stepNumber === boardSize * boardSize){
+            if (this.state.stepNumber === boardSize * boardSize) {
                 status = '引き分けでしたよっと'
             }
         }
@@ -145,9 +145,10 @@ class Game extends React.Component {
                 </div>
                 <div className="game-info">
                     <div>{status}</div>
-                    <button onClick={() => this.sortClick()}>{this.state.isAscSorted ? 'sort desc' : 'sort asc'}</button>
+                    <button
+                        onClick={() => this.sortClick()}>{this.state.isAscSorted ? 'sort desc' : 'sort asc'}</button>
                     {this.state.isAscSorted ?
-                        <ol>{moves}</ol>:
+                        <ol>{moves}</ol> :
                         <ol reversed="reversed">{moves}</ol>
                     }
 
@@ -159,8 +160,8 @@ class Game extends React.Component {
 
 // ========================================
 const range = (from, to, step = 1) =>
-    from < to || ( !to && from > 0)
-        ? [... Array(to ? (to - from) / step : from)].map((v, i) =>
+    from < to || (!to && from > 0)
+        ? [...Array(to ? (to - from) / step : from)].map((v, i) =>
             to
                 ? from + i * step
                 : i
@@ -168,14 +169,14 @@ const range = (from, to, step = 1) =>
         : []
 const boardSize = 5;
 let winLines = [];
-for(let i = 0; i < boardSize; i++){
-    winLines.push(range(i * boardSize, (i + 1 ) * boardSize));
+for (let i = 0; i < boardSize; i++) {
+    winLines.push(range(i * boardSize, (i + 1) * boardSize));
 }
-for(let i = 0; i < boardSize; i++){
+for (let i = 0; i < boardSize; i++) {
     winLines.push(range(i, boardSize * boardSize + i, boardSize));
 }
 winLines.push(range(0, boardSize * (boardSize + 1), boardSize + 1));
-winLines.push(range(boardSize -1, (boardSize - 1) * (boardSize + 1), boardSize - 1));
+winLines.push(range(boardSize - 1, (boardSize - 1) * (boardSize + 1), boardSize - 1));
 console.log(winLines);
 ReactDOM.render(
     <Game
@@ -188,21 +189,21 @@ function calculateWinner(squares) {
     for (let i = 0; i < winLines.length; i++) {
         const winLine = winLines[i];
         const marker = squares[winLine[0]];
-        if (!marker){
+        if (!marker) {
             continue;
         }
         let isExit = true;
-        for(let j = 0; j < winLine.length; j++){
-            if(marker !== squares[winLine[j]]){
+        for (let j = 0; j < winLine.length; j++) {
+            if (marker !== squares[winLine[j]]) {
                 isExit = false;
             }
         }
-        if(isExit)
+        if (isExit)
             return {
                 winner: marker,
                 winSquares: winLine,
             }
-        }
+    }
     return {
         winner: null,
         winSquares: null,
